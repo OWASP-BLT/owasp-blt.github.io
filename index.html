@@ -511,6 +511,25 @@ function maturityMeta(score) {
   return              { label: 'Incubating', color: 'text-gray-500 dark:text-gray-400',     bg: 'bg-gray-100 dark:bg-gray-700' };
 }
 
+function maturityTooltip(r, score) {
+  const recentCommits = (r.weekly_commits || []).slice(-4).reduce((a, b) => a + b, 0);
+  const hints = [];
+  if ((r.total_commits || 0) < 1000)    hints.push(`Commits: ${r.total_commits || 0}/1000`);
+  if (((r.contributors || []).length) < 10) hints.push(`Contributors: ${(r.contributors || []).length}/10`);
+  if ((r.stargazers_count || 0) < 100)  hints.push(`Stars: ${r.stargazers_count || 0}/100`);
+  if ((r.readme_chars || 0) < 5000)     hints.push(`README length: ${r.readme_chars || 0}/5000 chars`);
+  if ((r.forks_count || 0) < 50)        hints.push(`Forks: ${r.forks_count || 0}/50`);
+  if (recentCommits < 20)               hints.push(`Recent activity: ${recentCommits}/20 commits (last 4 weeks)`);
+  if (((r.topics || []).length) < 5)    hints.push(`Topics: ${(r.topics || []).length}/5`);
+  let nextLevel = '';
+  if (score < 25)       nextLevel = 'Reach 25 pts to advance to Alpha.';
+  else if (score < 50)  nextLevel = 'Reach 50 pts to advance to Beta.';
+  else if (score < 75)  nextLevel = 'Reach 75 pts to advance to Mature.';
+  else                  nextLevel = 'This repo has reached the highest maturity level!';
+  const improveLine = hints.length ? 'To improve: ' + hints.join(' | ') : 'All metrics are at maximum!';
+  return `Maturity score: ${score}/100\n${nextLevel}\n${improveLine}`;
+}
+
 /* ------------------------------------------------------------------ */
 /*  GITHUB API FETCH (paginated)                                        */
 /* ------------------------------------------------------------------ */
@@ -777,7 +796,7 @@ function repoCardHTML(r) {
   // Maturity score badge
   const score = maturityScore(r);
   const { label: matLabel, color: matColor, bg: matBg } = maturityMeta(score);
-  const maturityBadge = `<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${matBg} ${matColor}" title="Maturity score: ${score}/100"><i class="fa-solid fa-rocket" aria-hidden="true"></i>${matLabel} ${score}</span>`;
+  const maturityBadge = `<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${matBg} ${matColor}" title="${escapeHtml(maturityTooltip(r, score))}"><i class="fa-solid fa-rocket" aria-hidden="true"></i>${matLabel} ${score}</span>`;
 
   // Project board URL (rocket button)
   const projectUrl = PROJECT_URLS[r.name];
@@ -966,7 +985,7 @@ function renderTableView(repos, container) {
         <i class="fa-solid fa-database text-cyan-400 mr-1" aria-hidden="true"></i>${formatSize(r.size)}
       </td>
       <td class="px-3 py-2 whitespace-nowrap">
-        <span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${matBg} ${matColor}" title="Maturity score: ${score}/100">${matLabel} ${score}</span>
+        <span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${matBg} ${matColor}" title="${escapeHtml(maturityTooltip(r, score))}">${matLabel} ${score}</span>
       </td>
       <td class="px-3 py-2 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400" title="Last updated: ${escapeHtml(r.updated_at)}">${timeAgo(r.updated_at)}</td>
       <td class="px-3 py-2 whitespace-nowrap">
