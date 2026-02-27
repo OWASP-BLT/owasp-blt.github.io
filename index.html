@@ -17,6 +17,11 @@
             brand: {
               DEFAULT: '#E10101',
               hover:   '#b91c1c',
+              50: '#fef2f2',
+              100: '#fee2e2',
+              500: '#E10101',
+              600: '#b91c1c',
+              700: '#991b1b',
             },
           },
         },
@@ -37,27 +42,30 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen font-sans">
+<body class="bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 min-h-screen font-sans antialiased">
 
 <!-- ===== TOP NAV ===== -->
-<header class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-  <div class="max-w-screen-xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 shadow-lg shadow-gray-900/5">
+  <div class="max-w-screen-xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
 
     <!-- Logo -->
-    <a href="https://blt.owasp.org" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 shrink-0">
-      <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-brand text-white text-sm font-bold">BLT</span>
-      <span class="font-bold text-gray-900 dark:text-white hidden sm:inline">OWASP BLT</span>
+    <a href="https://blt.owasp.org" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 shrink-0 group">
+      <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-brand to-red-600 text-white text-base font-bold shadow-lg shadow-brand/30 group-hover:shadow-xl group-hover:shadow-brand/40 transition-all duration-300 group-hover:scale-110">BLT</span>
+      <div class="hidden sm:block">
+        <div class="font-bold text-gray-900 dark:text-white text-lg">OWASP BLT</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 -mt-0.5">Organization Dashboard</div>
+      </div>
     </a>
 
     <!-- Search -->
-    <div class="relative flex-1 max-w-sm">
-      <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true"></i>
+    <div class="relative flex-1 max-w-md">
+      <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none" aria-hidden="true"></i>
       <input
         id="search-input"
         type="search"
         placeholder="Search repositories…"
         aria-label="Search repositories"
-        class="w-full pl-9 pr-4 py-2 border border-gray-400 rounded-md text-sm bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 focus-brand"
+        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus-brand transition-all duration-200"
       />
     </div>
 
@@ -67,7 +75,7 @@
       <select
         id="sort-select"
         aria-label="Sort repositories"
-        class="hidden sm:block text-sm border border-gray-400 rounded-md px-3 py-2 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 focus-brand"
+        class="hidden sm:block text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2.5 bg-white dark:bg-gray-800 dark:text-gray-100 focus-brand cursor-pointer hover:border-brand dark:hover:border-brand transition-all duration-200"
       >
         <option value="stars">★ Stars</option>
         <option value="forks">⑂ Forks</option>
@@ -83,7 +91,7 @@
       <button
         id="view-table-btn"
         aria-label="Table view"
-        class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        class="p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-brand/10 hover:text-brand hover:border-brand dark:hover:bg-brand/20 transition-all duration-200"
         title="Table view (default)"
       >
         <i class="fa-solid fa-table-list text-sm" aria-hidden="true"></i>
@@ -91,7 +99,7 @@
       <button
         id="view-card-btn"
         aria-label="Card view"
-        class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        class="p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-brand/10 hover:text-brand hover:border-brand dark:hover:bg-brand/20 transition-all duration-200"
         title="Card view"
       >
         <i class="fa-solid fa-grip text-sm" aria-hidden="true"></i>
@@ -101,7 +109,7 @@
       <button
         id="dark-toggle"
         aria-label="Toggle dark mode"
-        class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        class="p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-brand/10 hover:text-brand hover:border-brand dark:hover:bg-brand/20 transition-all duration-200"
       >
         <i id="dark-icon" class="fa-solid fa-moon text-sm" aria-hidden="true"></i>
       </button>
@@ -126,7 +134,7 @@
         target="_blank"
         rel="noopener noreferrer"
         aria-label="OWASP-BLT dashboard repository on GitHub"
-        class="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        class="p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-brand/10 hover:text-brand hover:border-brand dark:hover:bg-brand/20 transition-all duration-200"
       >
         <i class="fa-brands fa-github text-base" aria-hidden="true"></i>
       </a>
@@ -150,57 +158,53 @@
 </div>
 
 <!-- ===== MAIN LAYOUT ===== -->
-<div id="main-layout" class="max-w-screen-xl mx-auto px-4 py-6 flex gap-6">
+<div id="main-layout" class="max-w-screen-xl mx-auto px-4 sm:px-6 py-8 flex gap-6">
 
   <!-- ===== SIDEBAR ===== -->
-  <aside id="main-sidebar" class="hidden lg:flex flex-col gap-2 w-52 shrink-0">
-    <nav aria-label="Filter by type">
-      <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 px-2">Filter</p>
-      <ul class="space-y-0.5">
+  <aside id="main-sidebar" class="hidden lg:flex flex-col gap-3 w-56 shrink-0">
+    <nav aria-label="Filter by type" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 px-1">Filter</p>
+      <ul class="space-y-1">
         <li>
-          <button data-filter="all" class="filter-btn nav-active w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
-            <i class="fa-solid fa-layer-group w-4 mr-2" aria-hidden="true"></i>All repos
+          <button data-filter="all" class="filter-btn nav-active w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+            <i class="fa-solid fa-layer-group w-5 mr-2 text-center" aria-hidden="true"></i>All repos
           </button>
         </li>
         <li>
-          <button data-filter="source" class="filter-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
-            <i class="fa-solid fa-code-branch w-4 mr-2" aria-hidden="true"></i>Source
+          <button data-filter="source" class="filter-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+            <i class="fa-solid fa-code-branch w-5 mr-2 text-center" aria-hidden="true"></i>Source
           </button>
         </li>
         <li>
-          <button data-filter="fork" class="filter-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
-            <i class="fa-solid fa-code-fork w-4 mr-2" aria-hidden="true"></i>Forks
+          <button data-filter="fork" class="filter-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+            <i class="fa-solid fa-code-fork w-5 mr-2 text-center" aria-hidden="true"></i>Forks
           </button>
         </li>
         <li>
-          <button data-filter="archived" class="filter-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
-            <i class="fa-solid fa-archive w-4 mr-2" aria-hidden="true"></i>Archived
+          <button data-filter="archived" class="filter-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+            <i class="fa-solid fa-archive w-5 mr-2 text-center" aria-hidden="true"></i>Archived
           </button>
         </li>
       </ul>
     </nav>
 
-    <hr class="border-gray-200 dark:border-gray-700 my-2" />
-
-    <nav aria-label="Sort options (mobile-friendly sidebar)">
-      <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 px-2">Sort by</p>
-      <ul class="space-y-0.5" id="sort-sidebar">
-        <li><button data-sort="stars"            class="sort-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-star w-4 mr-2" aria-hidden="true"></i>Stars</button></li>
-        <li><button data-sort="forks"            class="sort-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-code-fork w-4 mr-2" aria-hidden="true"></i>Forks</button></li>
-        <li><button data-sort="open_issues_count" class="sort-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-circle-dot w-4 mr-2" aria-hidden="true"></i>Issues</button></li>
-        <li><button data-sort="updated_at"       class="sort-btn nav-active w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-clock w-4 mr-2" aria-hidden="true"></i>Updated</button></li>
+    <nav aria-label="Sort options (mobile-friendly sidebar)" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 px-1">Sort by</p>
+      <ul class="space-y-1" id="sort-sidebar">
+        <li><button data-sort="stars"            class="sort-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200"><i class="fa-solid fa-star w-5 mr-2 text-center" aria-hidden="true"></i>Stars</button></li>
+        <li><button data-sort="forks"            class="sort-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200"><i class="fa-solid fa-code-fork w-5 mr-2 text-center" aria-hidden="true"></i>Forks</button></li>
+        <li><button data-sort="open_issues_count" class="sort-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200"><i class="fa-solid fa-circle-dot w-5 mr-2 text-center" aria-hidden="true"></i>Issues</button></li>
+        <li><button data-sort="updated_at" class="sort-btn nav-active w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200"><i class="fa-solid fa-clock w-5 mr-2 text-center" aria-hidden="true"></i>Updated</button></li>
         <li><button data-sort="created_at"       class="sort-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-calendar-plus w-4 mr-2" aria-hidden="true"></i>Created</button></li>
-        <li><button data-sort="name"             class="sort-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-a w-4 mr-2" aria-hidden="true"></i>Name</button></li>
-        <li><button data-sort="readme_chars"     class="sort-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-file-lines w-4 mr-2" aria-hidden="true"></i>README Size</button></li>
-        <li><button data-sort="maturity"         class="sort-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"><i class="fa-solid fa-rocket w-4 mr-2" aria-hidden="true"></i>Maturity Score</button></li>
+        <li><button data-sort="name"             class="sort-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200"><i class="fa-solid fa-a w-5 mr-2 text-center" aria-hidden="true"></i>Name</button></li>
+        <li><button data-sort="readme_chars"     class="sort-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200"><i class="fa-solid fa-file-lines w-5 mr-2 text-center" aria-hidden="true"></i>README Size</button></li>
+        <li><button data-sort="maturity"         class="sort-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200"><i class="fa-solid fa-rocket w-5 mr-2 text-center" aria-hidden="true"></i>Maturity Score</button></li>
       </ul>
     </nav>
 
-    <hr class="border-gray-200 dark:border-gray-700 my-2" />
-
-    <div id="lang-filter-sidebar">
-      <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 px-2">Language</p>
-      <ul class="space-y-0.5" id="lang-list"></ul>
+    <div id="lang-filter-sidebar" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 px-1">Language</p>
+      <ul class="space-y-1" id="lang-list"></ul>
     </div>
   </aside>
 
@@ -267,13 +271,13 @@
 
     <!-- Repo table (default view) -->
     <div id="repo-table" class="overflow-x-auto hidden">
-      <table class="border-collapse text-sm">
+      <table class="border-collapse text-sm bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
         <tbody>
-          <tr><td colspan="11" class="py-2"><div class="skeleton h-8 rounded"></div></td></tr>
-          <tr><td colspan="11" class="py-2"><div class="skeleton h-8 rounded"></div></td></tr>
-          <tr><td colspan="11" class="py-2"><div class="skeleton h-8 rounded"></div></td></tr>
-          <tr><td colspan="11" class="py-2"><div class="skeleton h-8 rounded"></div></td></tr>
-          <tr><td colspan="11" class="py-2"><div class="skeleton h-8 rounded"></div></td></tr>
+          <tr><td colspan="11" class="py-3 px-4"><div class="skeleton h-8 rounded-lg"></div></td></tr>
+          <tr><td colspan="11" class="py-3 px-4"><div class="skeleton h-8 rounded-lg"></div></td></tr>
+          <tr><td colspan="11" class="py-3 px-4"><div class="skeleton h-8 rounded-lg"></div></td></tr>
+          <tr><td colspan="11" class="py-3 px-4"><div class="skeleton h-8 rounded-lg"></div></td></tr>
+          <tr><td colspan="11" class="py-3 px-4"><div class="skeleton h-8 rounded-lg"></div></td></tr>
           <tr><td colspan="11" class="py-2"><div class="skeleton h-8 rounded"></div></td></tr>
         </tbody>
       </table>
@@ -306,11 +310,11 @@
 
     <!-- Empty state -->
     <div id="empty-state" class="hidden text-center py-16">
-      <i class="fa-solid fa-box-open text-4xl text-gray-300 dark:text-gray-600 mb-3" aria-hidden="true"></i>
-      <p class="font-semibold text-lg">No repositories match your search</p>
+      <i class="fa-solid fa-box-open text-5xl text-gray-300 dark:text-gray-600 mb-4" aria-hidden="true"></i>
+      <p class="font-semibold text-lg text-gray-600 dark:text-gray-300 mb-4">No repositories match your search</p>
       <button
         id="clear-btn"
-        class="mt-3 px-4 py-2 border border-brand text-brand text-sm font-semibold rounded-md hover:bg-brand hover:text-white transition-colors"
+        class="px-6 py-2.5 border border-brand text-brand text-sm font-semibold rounded-lg hover:bg-brand hover:text-white transition-all duration-200 transform hover:scale-105"
       >
         Clear filters
       </button>
@@ -320,13 +324,19 @@
 </div>
 
 <!-- ===== FOOTER ===== -->
-<footer class="mt-10 border-t border-gray-200 dark:border-gray-700 py-6 text-center text-xs text-gray-400 dark:text-gray-500">
-  <p>
-    Data sourced from the
-    <a href="https://docs.github.com/en/rest" target="_blank" rel="noopener noreferrer" class="text-brand underline-offset-2 hover:underline">GitHub REST API</a>.
-    Built for <a href="https://blt.owasp.org" target="_blank" rel="noopener noreferrer" class="text-brand underline-offset-2 hover:underline">OWASP BLT</a>.
-  </p>
-  <p id="footer-ts" class="mt-1"></p>
+<footer class="mt-10 mb-6 mx-6">
+  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 text-center shadow-sm">
+    <div class="flex items-center justify-center gap-2 mb-2">
+      <i class="fa-brands fa-github text-lg text-gray-400 dark:text-gray-500" aria-hidden="true"></i>
+      <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">OWASP BLT Repository Dashboard</span>
+    </div>
+    <p class="text-xs text-gray-400 dark:text-gray-500">
+      Data sourced from the
+      <a href="https://docs.github.com/en/rest" target="_blank" rel="noopener noreferrer" class="text-brand font-medium underline-offset-2 hover:underline transition-colors">GitHub REST API</a>.
+      Built with ❤️ for <a href="https://blt.owasp.org" target="_blank" rel="noopener noreferrer" class="text-brand font-medium underline-offset-2 hover:underline transition-colors">OWASP BLT</a>.
+    </p>
+    <p id="footer-ts" class="mt-2 text-xs text-gray-400 dark:text-gray-500"></p>
+  </div>
 </footer>
 
 <!-- ===== JAVASCRIPT ===== -->

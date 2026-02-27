@@ -246,26 +246,28 @@ function buildStats(repos, cumulative) {
   const sizeMb = totalSizeKb > 0 ? `${(totalSizeKb / 1024).toFixed(1)} MB` : '—';
 
   const stats = [
-    { icon: 'fa-solid fa-box',         label: 'Repos',       value: formatNumber(totalRepos),        color: 'text-indigo-500', href: `https://github.com/orgs/${ORG}/repositories` },
-    { icon: 'fa-solid fa-star',        label: 'Stars',        value: formatNumber(totalStars),        color: 'text-yellow-500', href: `https://github.com/orgs/${ORG}/repositories?sort=stargazers` },
-    { icon: 'fa-solid fa-code-fork',   label: 'Forks',        value: formatNumber(totalForks),        color: 'text-green-500',  href: `https://github.com/orgs/${ORG}/repositories?type=fork` },
-    { icon: 'fa-solid fa-circle-dot',  label: 'Issues',       value: formatNumber(totalIssues),       color: 'text-brand',      href: `https://github.com/search?q=org%3A${ORG}+is%3Aissue+is%3Aopen&type=issues` },
-    { icon: 'fa-solid fa-code-pull-request', label: 'PRs',         value: formatNumber(totalPRs),          color: 'text-teal-500',   href: `https://github.com/search?q=org%3A${ORG}+is%3Apr+is%3Aopen&type=pullrequests` },
-    { icon: 'fa-solid fa-code',        label: 'Languages',    value: formatNumber(langCount),         color: 'text-purple-500', href: null },
-    { icon: 'fa-solid fa-tags',        label: 'Topics',       value: formatNumber(totalTopics),       color: 'text-orange-500', href: null },
-    { icon: 'fa-solid fa-database',    label: 'Size',         value: sizeMb,                          color: 'text-cyan-500',   href: null },
-    { icon: 'fa-solid fa-file-lines',  label: 'README',       value: formatNumber(totalReadmeChars),  color: 'text-pink-500',   href: null },
-    { icon: 'fa-solid fa-code-branch', label: 'Branches',     value: formatNumber(totalBranches),     color: 'text-violet-500', href: null },
+    { icon: 'fa-solid fa-box',         label: 'Repos',       value: formatNumber(totalRepos),        color: 'text-indigo-600', bg: 'from-indigo-500 to-indigo-600', href: `https://github.com/orgs/${ORG}/repositories` },
+    { icon: 'fa-solid fa-star',        label: 'Stars',        value: formatNumber(totalStars),        color: 'text-yellow-600', bg: 'from-yellow-400 to-yellow-500', href: `https://github.com/orgs/${ORG}/repositories?sort=stargazers` },
+    { icon: 'fa-solid fa-code-fork',   label: 'Forks',        value: formatNumber(totalForks),        color: 'text-green-600', bg: 'from-green-500 to-green-600',  href: `https://github.com/orgs/${ORG}/repositories?type=fork` },
+    { icon: 'fa-solid fa-circle-dot',  label: 'Issues',       value: formatNumber(totalIssues),       color: 'text-rose-600', bg: 'from-rose-500 to-rose-600',      href: `https://github.com/search?q=org%3A${ORG}+is%3Aissue+is%3Aopen&type=issues` },
+    { icon: 'fa-solid fa-code-pull-request', label: 'PRs',         value: formatNumber(totalPRs),          color: 'text-teal-600', bg: 'from-teal-500 to-teal-600',      href: `https://github.com/search?q=org%3A${ORG}+is%3Apr+is%3Aopen&type=pullrequests` },
+    { icon: 'fa-solid fa-code',        label: 'Languages',    value: formatNumber(langCount),         color: 'text-purple-600', bg: 'from-purple-500 to-purple-600', href: null },
+    { icon: 'fa-solid fa-tags',        label: 'Topics',       value: formatNumber(totalTopics),       color: 'text-orange-600', bg: 'from-orange-500 to-orange-600', href: null },
+    { icon: 'fa-solid fa-database',    label: 'Size',         value: sizeMb,                          color: 'text-cyan-600', bg: 'from-cyan-500 to-cyan-600',   href: null },
+    { icon: 'fa-solid fa-file-lines',  label: 'README',       value: formatNumber(totalReadmeChars),  color: 'text-pink-600', bg: 'from-pink-500 to-pink-600',   href: null },
+    { icon: 'fa-solid fa-code-branch', label: 'Branches',     value: formatNumber(totalBranches),     color: 'text-violet-600', bg: 'from-violet-500 to-violet-600', href: null },
   ];
 
   document.getElementById('stats-bar').innerHTML = stats.map(s => {
     const inner = `
-      <i class="${s.icon} ${s.color} text-sm" aria-hidden="true"></i>
-      <div class="min-w-0">
-        <p class="text-xs font-bold text-gray-900 dark:text-white leading-tight">${s.value}</p>
-        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${s.label}</p>
+      <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${s.bg} shadow-lg text-white mb-3">
+        <i class="${s.icon} text-xl" aria-hidden="true"></i>
+      </div>
+      <div class="min-w-0 text-center">
+        <p class="text-2xl font-bold text-gray-900 dark:text-white leading-tight mb-1">${s.value}</p>
+        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">${s.label}</p>
       </div>`;
-    const cls = `bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 flex items-center gap-1.5 shadow-sm flex-1 min-w-[6rem] ${s.href ? 'hover:border-brand hover:shadow-md transition-all cursor-pointer' : ''}`;
+    const cls = `stat-card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-5 flex flex-col items-center shadow-sm flex-1 min-w-[7rem] ${s.href ? 'hover:border-${s.color.replace("text-", "")} hover:shadow-lg cursor-pointer group' : ''}`;
     return s.href
       ? `<a href="${s.href}" target="_blank" rel="noopener noreferrer" class="${cls}" aria-label="${s.label}: ${s.value}">${inner}</a>`
       : `<div class="${cls}">${inner}</div>`;
@@ -284,17 +286,18 @@ function buildLangFilter(repos) {
   const list = document.getElementById('lang-list');
   list.innerHTML = `
     <li>
-      <button data-lang="" class="lang-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors nav-active">
+      <button data-lang="" class="lang-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 nav-active">
         All languages
       </button>
     </li>
   ` + sorted.map(([lang, count]) => `
     <li>
-      <button data-lang="${escapeHtml(lang)}" class="lang-btn w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-between">
-        <span>
-          <span class="lang-dot" style="background:${LANG_COLORS[lang] || '#8b949e'}"></span>${escapeHtml(lang)}
+      <button data-lang="${escapeHtml(lang)}" class="lang-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 flex items-center justify-between group">
+        <span class="flex items-center gap-2">
+          <span class="lang-dot transition-transform group-hover:scale-125" style="background:${LANG_COLORS[lang] || '#8b949e'}"></span>
+          <span class="group-hover:translate-x-0.5 transition-transform">${escapeHtml(lang)}</span>
         </span>
-        <span class="text-xs text-gray-400">${count}</span>
+        <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 group-hover:text-brand transition-colors">${count}</span>
       </button>
     </li>
   `).join('');
@@ -591,7 +594,7 @@ function renderTableView(repos, container) {
     const isActive = tableSortCol === col.key;
     const arrow = isActive ? (tableSortDir === 'asc' ? ' ▲' : ' ▼') : '';
     const activeCls = isActive ? ' text-brand dark:text-red-400 font-bold' : '';
-    return `<th data-col="${col.key}" class="px-3 py-2.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap transition-colors${activeCls}" title="Sort by ${escapeHtml(col.label)}">${escapeHtml(col.label)}<span class="ml-1">${arrow}</span></th>`;
+    return `<th data-col="${col.key}" class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap cursor-pointer hover:text-brand dark:hover:text-red-400 transition-colors${activeCls}" title="Sort by ${escapeHtml(col.label)}">${escapeHtml(col.label)}<span class="ml-1">${arrow}</span></th>`;
   }).join('');
 
   // Build rows
@@ -600,89 +603,89 @@ function renderTableView(repos, container) {
     const score = maturityScore(r);
     const { label: matLabel, color: matColor, bg: matBg } = maturityMeta(score);
     const rowBg = i % 2 === 0
-      ? 'bg-white dark:bg-gray-900'
-      : 'bg-gray-50/60 dark:bg-gray-800/60';
+      ? 'bg-white dark:bg-gray-800'
+      : 'bg-gray-50/50 dark:bg-gray-800/50';
     const archiveBadge = r.archived
-      ? `<span class="ml-1 text-xs bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 px-1.5 rounded-full">Arc</span>`
+      ? `<span class="ml-1 text-xs bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 px-2 py-0.5 rounded-full font-medium">Arc</span>`
       : '';
     const forkBadge = r.fork
-      ? `<span class="ml-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 rounded-full">Fork</span>`
+      ? `<span class="ml-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full font-medium">Fork</span>`
       : '';
     const projectUrl = PROJECT_URLS[r.name];
     const rowTopics = (r.topics || []).map(t => {
       if (t.toLowerCase().includes('gsoc')) {
-        return `<span class="inline-block gsoc-label text-xs px-2 py-0.5 rounded-full whitespace-nowrap">${escapeHtml(t)}</span>`;
+        return `<span class="inline-block gsoc-label text-xs px-2 py-0.5 rounded-full whitespace-nowrap font-medium">${escapeHtml(t)}</span>`;
       }
-      return `<span class="inline-block bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs px-2 py-0.5 rounded-full whitespace-nowrap">${escapeHtml(t)}</span>`;
+      return `<span class="inline-block bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs px-2 py-0.5 rounded-full whitespace-nowrap font-medium">${escapeHtml(t)}</span>`;
     }).join(' ');
-    return `<tr class="${rowBg} border-b border-gray-100 dark:border-gray-700 hover:bg-red-50/40 dark:hover:bg-red-900/10 transition-colors">
-      <td class="px-3 py-2 font-medium">
+    return `<tr class="${rowBg} border-b border-gray-100 dark:border-gray-700 hover:bg-red-50/50 dark:hover:bg-red-900/15 transition-all duration-200">
+      <td class="px-4 py-3 font-semibold">
         <a href="${escapeHtml(r.html_url)}" target="_blank" rel="noopener noreferrer" class="text-brand hover:underline underline-offset-2 text-sm whitespace-nowrap">${escapeHtml(r.name)}</a>${archiveBadge}${forkBadge}
-        ${r.description ? `<p class="text-xs text-gray-400 dark:text-gray-500 truncate max-w-xs mt-0.5">${escapeHtml(r.description)}</p>` : ''}
+        ${r.description ? `<p class="text-xs text-gray-400 dark:text-gray-500 truncate max-w-xs mt-1">${escapeHtml(r.description)}</p>` : ''}
       </td>
-      <td class="px-3 py-2">
+      <td class="px-4 py-3">
         <div class="flex flex-wrap gap-1">${rowTopics || '<span class="text-gray-300 dark:text-gray-600 text-xs">—</span>'}</div>
       </td>
-      <td class="px-3 py-2 whitespace-nowrap text-sm">
+      <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
         ${r.language
           ? `<span class="lang-dot" style="background:${langColor}"></span><span class="text-gray-600 dark:text-gray-300">${escapeHtml(r.language)}</span>`
           : `<span class="text-gray-300 dark:text-gray-600">—</span>`}
       </td>
-      <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">
+      <td class="px-4 py-3 text-right whitespace-nowrap text-sm font-medium tabular-nums">
         <a href="${escapeHtml(r.html_url)}/stargazers" target="_blank" rel="noopener noreferrer" class="hover:text-yellow-500 transition-colors" title="Stars">
           <i class="fa-solid fa-star text-yellow-400 mr-1" aria-hidden="true"></i>${formatNumber(r.stargazers_count || 0)}
         </a>
       </td>
-      <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">
+      <td class="px-4 py-3 text-right whitespace-nowrap text-sm font-medium tabular-nums">
         <a href="${escapeHtml(r.html_url)}/forks" target="_blank" rel="noopener noreferrer" class="hover:text-green-600 transition-colors" title="Forks">
           <i class="fa-solid fa-code-fork text-green-500 mr-1" aria-hidden="true"></i>${formatNumber(r.forks_count || 0)}
         </a>
       </td>
-      <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">
+      <td class="px-4 py-3 text-right whitespace-nowrap text-sm font-medium tabular-nums">
         <a href="${escapeHtml(r.html_url)}/issues" target="_blank" rel="noopener noreferrer" class="hover:text-brand transition-colors" title="Open issues">
           <i class="fa-solid fa-circle-dot text-brand mr-1" aria-hidden="true"></i>${formatNumber(repoIssueCount(r))}
         </a>
       </td>
-      <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">
+      <td class="px-4 py-3 text-right whitespace-nowrap text-sm tabular-nums">
         ${r.open_pr_count
           ? `<a href="${escapeHtml(r.html_url)}/pulls" target="_blank" rel="noopener noreferrer" class="hover:text-teal-500 transition-colors" title="Open pull requests"><i class="fa-solid fa-code-pull-request text-teal-500 mr-1" aria-hidden="true"></i>${formatNumber(r.open_pr_count)}</a>`
           : `<span class="text-gray-300 dark:text-gray-600">—</span>`}
       </td>
-      <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">
+      <td class="px-3 py-2 text-right whitespace-nowrap text-sm font-medium tabular-nums">
         ${r.total_commits
           ? `<a href="${escapeHtml(r.html_url)}/commits" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition-colors" title="Total commits"><i class="fa-solid fa-code-commit text-blue-400 mr-1" aria-hidden="true"></i>${formatNumber(r.total_commits)}</a>`
           : `<span class="text-gray-300 dark:text-gray-600">—</span>`}
       </td>
-      <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">
+      <td class="px-4 py-3 text-right whitespace-nowrap text-sm font-medium tabular-nums">
         ${r.branch_count
           ? `<a href="${escapeHtml(r.html_url)}/branches" target="_blank" rel="noopener noreferrer" class="hover:text-violet-500 transition-colors" title="Branches"><i class="fa-solid fa-code-branch text-violet-400 mr-1" aria-hidden="true"></i>${formatNumber(r.branch_count)}</a>`
           : `<span class="text-gray-300 dark:text-gray-600">—</span>`}
       </td>
-      <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">
+      <td class="px-4 py-3 text-right whitespace-nowrap text-sm font-medium tabular-nums">
         <i class="fa-solid fa-database text-cyan-400 mr-1" aria-hidden="true"></i>${formatSize(r.size)}
       </td>
-      <td class="px-3 py-2 whitespace-nowrap">
+      <td class="px-4 py-3 whitespace-nowrap">
         <span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${matBg} ${matColor}" title="Maturity score: ${score}/100">${matLabel} ${score}</span>
       </td>
-      <td class="px-3 py-2 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400" title="Last updated: ${escapeHtml(r.updated_at)}">${timeAgo(r.updated_at)}</td>
-      <td class="px-3 py-2 whitespace-nowrap">
-        <div class="flex gap-1.5">
-          <a href="${escapeHtml(r.html_url)}" target="_blank" rel="noopener noreferrer" class="text-xs px-2 py-1 bg-brand text-white rounded hover:bg-red-700 transition-colors" title="View on GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a>
-          ${r.homepage ? `<a href="${escapeHtml(r.homepage)}" target="_blank" rel="noopener noreferrer" class="text-xs px-2 py-1 border border-brand text-brand rounded hover:bg-brand hover:text-white transition-colors" title="Live Site"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>` : ''}
-          ${projectUrl ? `<a href="${escapeHtml(projectUrl)}" target="_blank" rel="noopener noreferrer" class="text-xs px-2 py-1 border border-brand text-brand rounded hover:bg-brand hover:text-white transition-colors" title="Project Board"><i class="fa-solid fa-rocket" aria-hidden="true"></i></a>` : ''}
-          <a href="${escapeHtml(r.html_url)}/issues/new" target="_blank" rel="noopener noreferrer" class="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded hover:border-brand hover:text-brand transition-colors" title="New Issue"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i></a>
-          <a href="https://github.com/${ORG}/${r.name}/agents" target="_blank" rel="noopener noreferrer" class="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded hover:border-brand hover:text-brand transition-colors" title="Open agent tasks for this repo"><i class="fa-solid fa-robot" aria-hidden="true"></i></a>
+      <td class="px-4 py-3 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400 font-medium" title="Last updated: ${escapeHtml(r.updated_at)}">${timeAgo(r.updated_at)}</td>
+      <td class="px-4 py-3 whitespace-nowrap">
+        <div class="flex gap-2">
+          <a href="${escapeHtml(r.html_url)}" target="_blank" rel="noopener noreferrer" class="text-xs px-3 py-1.5 bg-brand text-white rounded-lg hover:bg-red-700 transition-colors font-medium" title="View on GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a>
+          ${r.homepage ? `<a href="${escapeHtml(r.homepage)}" target="_blank" rel="noopener noreferrer" class="text-xs px-3 py-1.5 border border-brand text-brand rounded-lg hover:bg-brand hover:text-white transition-colors font-medium" title="Live Site"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>` : ''}
+          ${projectUrl ? `<a href="${escapeHtml(projectUrl)}" target="_blank" rel="noopener noreferrer" class="text-xs px-3 py-1.5 border border-brand text-brand rounded-lg hover:bg-brand hover:text-white transition-colors font-medium" title="Project Board"><i class="fa-solid fa-rocket" aria-hidden="true"></i></a>` : ''}
+          <a href="${escapeHtml(r.html_url)}/issues/new" target="_blank" rel="noopener noreferrer" class="text-xs px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 rounded-lg hover:border-brand hover:text-brand transition-colors font-medium" title="New Issue"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i></a>
+          <a href="https://github.com/${ORG}/${r.name}/agents" target="_blank" rel="noopener noreferrer" class="text-xs px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 rounded-lg hover:border-brand hover:text-brand transition-colors font-medium" title="Open agent tasks for this repo"><i class="fa-solid fa-robot" aria-hidden="true"></i></a>
         </div>
       </td>
     </tr>`;
   }).join('');
 
   container.innerHTML = `
-    <table class="border-collapse text-sm w-max">
-      <thead class="bg-gray-50 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700">
+    <table class="border-collapse text-sm w-max bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
+      <thead class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-750 border-b-2 border-gray-200 dark:border-gray-700">
         <tr>
           ${headerCells}
-          <th class="px-3 py-2.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">Links</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">Links</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
