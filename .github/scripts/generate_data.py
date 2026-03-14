@@ -406,17 +406,20 @@ def main() -> None:
     # Fetch top contributors and weekly commit activity for each non-archived repo
     print("Fetching contributors and commit activity…", flush=True)
     contributors_map: dict[str, list] = {}
+    contributor_count_map: dict[str, int] = {}
     total_commits_map: dict[str, int] = {}
     weekly_commits_map: dict[str, list] = {}
     all_contributor_logins: set[str] = set()
     for i, repo in enumerate(repos):
         if repo.get("archived"):
             contributors_map[repo["full_name"]] = []
+            contributor_count_map[repo["full_name"]] = 0
             total_commits_map[repo["full_name"]] = 0
             weekly_commits_map[repo["full_name"]] = []
         else:
             top_contributors, total_commits, logins = fetch_contributors(repo["full_name"])
             contributors_map[repo["full_name"]] = top_contributors
+            contributor_count_map[repo["full_name"]] = len(logins)
             total_commits_map[repo["full_name"]] = total_commits
             all_contributor_logins.update(logins)
             weekly_commits_map[repo["full_name"]] = fetch_weekly_commits(repo["full_name"])
@@ -563,6 +566,7 @@ def main() -> None:
             {**{k: v for k, v in repo.items() if k in KEEP_FIELDS},
              "readme_chars": readme_chars_map.get(repo["full_name"], 0),
              "contributors": contributors_map.get(repo["full_name"], []),
+             "contributor_count": contributor_count_map.get(repo["full_name"], 0),
              "total_commits": total_commits_map.get(repo["full_name"], 0),
              "weekly_commits": weekly_commits_map.get(repo["full_name"], []),
              "file_count": file_count_map.get(repo["full_name"], 0),
