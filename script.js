@@ -172,6 +172,24 @@ async function fetchAllPages(url) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  STATS BAR                                                           */
+/* ------------------------------------------------------------------ */
+
+/** Populate the org-level stats bar from the cumulative data object. */
+function updateStatsBar(cumulative) {
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = formatNumber(val ?? 0);
+  };
+  set('stat-repos',        cumulative.total_repos);
+  set('stat-contributors', cumulative.total_contributors);
+  set('stat-stars',        cumulative.total_stars);
+  set('stat-forks',        cumulative.total_forks);
+  set('stat-issues',       cumulative.total_open_issues);
+  set('stat-prs',          cumulative.total_open_prs);
+}
+
+/* ------------------------------------------------------------------ */
 /*  LOAD REPOS                                                          */
 /* ------------------------------------------------------------------ */
 
@@ -201,6 +219,9 @@ async function loadRepos() {
       const searchInput = document.getElementById('search-input');
       if (searchInput) searchInput.placeholder = `Search ${allRepos.length} repositories…`;
       applyFilters();
+      if (payload.cumulative) {
+        updateStatsBar(payload.cumulative);
+      }
       const generatedAt = payload.generated_at
         ? new Date(payload.generated_at).toLocaleString()
         : 'unknown';
@@ -605,6 +626,7 @@ function repoCardHTML(r) {
       ${r.file_count ? `<span title="Total files (recursive)"><i class="fa-solid fa-file mr-1 text-teal-400" aria-hidden="true"></i>${formatNumber(r.file_count)} files</span>` : ''}
       ${r.branch_count ? `<a href="${escapeHtml(r.html_url)}/branches" target="_blank" rel="noopener noreferrer" title="Branches" class="hover:text-violet-500 transition-colors"><i class="fa-solid fa-code-branch mr-1 text-violet-400" aria-hidden="true"></i>${formatNumber(r.branch_count)} branches</a>` : ''}
       ${r.total_commits ? `<a href="${escapeHtml(r.html_url)}/commits" target="_blank" rel="noopener noreferrer" title="Total commits" class="hover:text-blue-500 transition-colors"><i class="fa-solid fa-code-commit mr-1 text-blue-400" aria-hidden="true"></i>${formatNumber(r.total_commits)} commits</a>` : ''}
+      ${r.contributor_count ? `<a href="${escapeHtml(r.html_url)}/graphs/contributors" target="_blank" rel="noopener noreferrer" title="Total contributors" class="hover:text-orange-500 transition-colors"><i class="fa-solid fa-users mr-1 text-orange-400" aria-hidden="true"></i>${formatNumber(r.contributor_count)} contributors</a>` : ''}
       ${r.readme_chars ? `<span title="README character count"><i class="fa-solid fa-file-lines mr-1 text-pink-400" aria-hidden="true"></i>${formatNumber(r.readme_chars)} chars</span>` : ''}
     </div>
 
@@ -764,6 +786,7 @@ const TABLE_COLS = [
   { key: 'open_pr_count',     label: 'PRs'        },
   { key: 'agent_pr_count',    label: 'Agent PRs'  },
   { key: 'total_commits',     label: 'Commits'    },
+  { key: 'contributor_count', label: 'Contributors' },
   { key: 'branch_count',      label: 'Branches'   },
   { key: 'size',              label: 'Size'       },
   { key: 'readme_chars',      label: 'README Size' },
@@ -825,6 +848,7 @@ function renderTableView(repos, container) {
     open_pr_count:      repos.reduce((s, r) => s + (r.open_pr_count || 0), 0),
     agent_pr_count:     repos.reduce((s, r) => s + (r.agent_pr_count || 0), 0),
     total_commits:      repos.reduce((s, r) => s + (r.total_commits || 0), 0),
+    contributor_count:  new Set(repos.flatMap(r => (r.contributors || []).map(c => c.login))).size,
     branch_count:       repos.reduce((s, r) => s + (r.branch_count || 0), 0),
     size:               repos.reduce((s, r) => s + (r.size || 0), 0),
     readme_chars:       repos.reduce((s, r) => s + (r.readme_chars || 0), 0),
@@ -912,6 +936,11 @@ function renderTableView(repos, container) {
       <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">
         ${r.total_commits
           ? `<a href="${escapeHtml(r.html_url)}/commits" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition-colors" title="Total commits"><i class="fa-solid fa-code-commit text-blue-400 mr-1" aria-hidden="true"></i>${formatNumber(r.total_commits)}</a>`
+          : `<span class="text-gray-300 dark:text-gray-600">—</span>`}
+      </td>
+      <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">
+        ${r.contributor_count
+          ? `<a href="${escapeHtml(r.html_url)}/graphs/contributors" target="_blank" rel="noopener noreferrer" class="hover:text-orange-500 transition-colors" title="Total contributors"><i class="fa-solid fa-users text-orange-400 mr-1" aria-hidden="true"></i>${formatNumber(r.contributor_count)}</a>`
           : `<span class="text-gray-300 dark:text-gray-600">—</span>`}
       </td>
       <td class="px-3 py-2 text-right whitespace-nowrap text-sm tabular-nums">

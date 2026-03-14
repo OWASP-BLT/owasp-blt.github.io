@@ -96,19 +96,21 @@ def fetch_languages(repo_full_name: str) -> dict:
         return {}
 
 
-def fetch_contributors(repo_full_name: str, top_n: int = 10) -> tuple[list[dict], int]:
-    """Return (top_n contributors, total_commits) for a repo.
+def fetch_contributors(repo_full_name: str, top_n: int = 10) -> tuple[list[dict], int, set[str]]:
+    """Return (top_n contributors, total_commits, all_logins) for a repo.
 
     All contributor pages are fetched so that total_commits reflects the full
     commit history, while only the top_n entries are included in the returned list.
+    all_logins is the set of every contributor login for unique-count aggregation.
     """
     try:
         all_contributors = fetch_all_pages(
             f"/repos/{repo_full_name}/contributors?anon=false"
         )
         if not isinstance(all_contributors, list):
-            return [], 0
+            return [], 0, set()
         total_commits = sum(c.get("contributions", 0) for c in all_contributors)
+        all_logins = {c.get("login", "") for c in all_contributors if c.get("login")}
         top = [
             {
                 "login": c.get("login", ""),
@@ -118,10 +120,10 @@ def fetch_contributors(repo_full_name: str, top_n: int = 10) -> tuple[list[dict]
             }
             for c in all_contributors[:top_n]
         ]
-        return top, total_commits
+        return top, total_commits, all_logins
     except (urllib.error.HTTPError, urllib.error.URLError) as exc:
         print(f"  Warning: could not fetch contributors for {repo_full_name}: {exc}", file=sys.stderr)
-        return [], 0
+        return [], 0, set()
 
 
 def fetch_file_count(repo_full_name: str, default_branch: str) -> int:
@@ -404,17 +406,22 @@ def main() -> None:
     # Fetch top contributors and weekly commit activity for each non-archived repo
     print("Fetching contributors and commit activity…", flush=True)
     contributors_map: dict[str, list] = {}
+    contributor_count_map: dict[str, int] = {}
     total_commits_map: dict[str, int] = {}
     weekly_commits_map: dict[str, list] = {}
+    all_contributor_logins: set[str] = set()
     for i, repo in enumerate(repos):
         if repo.get("archived"):
             contributors_map[repo["full_name"]] = []
+            contributor_count_map[repo["full_name"]] = 0
             total_commits_map[repo["full_name"]] = 0
             weekly_commits_map[repo["full_name"]] = []
         else:
-            top_contributors, total_commits = fetch_contributors(repo["full_name"])
+            top_contributors, total_commits, logins = fetch_contributors(repo["full_name"])
             contributors_map[repo["full_name"]] = top_contributors
+            contributor_count_map[repo["full_name"]] = len(logins)
             total_commits_map[repo["full_name"]] = total_commits
+            all_contributor_logins.update(logins)
             weekly_commits_map[repo["full_name"]] = fetch_weekly_commits(repo["full_name"])
             time.sleep(0.1)
         if (i + 1) % 10 == 0:
@@ -559,6 +566,7 @@ def main() -> None:
             {**{k: v for k, v in repo.items() if k in KEEP_FIELDS},
              "readme_chars": readme_chars_map.get(repo["full_name"], 0),
              "contributors": contributors_map.get(repo["full_name"], []),
+             "contributor_count": contributor_count_map.get(repo["full_name"], 0),
              "total_commits": total_commits_map.get(repo["full_name"], 0),
              "weekly_commits": weekly_commits_map.get(repo["full_name"], []),
              "file_count": file_count_map.get(repo["full_name"], 0),
@@ -590,6 +598,7 @@ def main() -> None:
         "cumulative": {
             "total_repos":        len(repos),
             "active_repos":       active_repos,
+            "total_contributors": len(all_contributor_logins),
             "total_stars":        total_stars,
             "total_forks":        total_forks,
             "total_open_issues":  total_issues,
