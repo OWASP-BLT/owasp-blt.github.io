@@ -172,6 +172,24 @@ async function fetchAllPages(url) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  STATS BAR                                                           */
+/* ------------------------------------------------------------------ */
+
+/** Populate the org-level stats bar from the cumulative data object. */
+function updateStatsBar(cumulative) {
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = formatNumber(val ?? 0);
+  };
+  set('stat-repos',        cumulative.total_repos);
+  set('stat-contributors', cumulative.total_contributors);
+  set('stat-stars',        cumulative.total_stars);
+  set('stat-forks',        cumulative.total_forks);
+  set('stat-issues',       cumulative.total_open_issues);
+  set('stat-prs',          cumulative.total_open_prs);
+}
+
+/* ------------------------------------------------------------------ */
 /*  LOAD REPOS                                                          */
 /* ------------------------------------------------------------------ */
 
@@ -201,6 +219,9 @@ async function loadRepos() {
       const searchInput = document.getElementById('search-input');
       if (searchInput) searchInput.placeholder = `Search ${allRepos.length} repositories…`;
       applyFilters();
+      if (payload.cumulative) {
+        updateStatsBar(payload.cumulative);
+      }
       const generatedAt = payload.generated_at
         ? new Date(payload.generated_at).toLocaleString()
         : 'unknown';
