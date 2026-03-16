@@ -201,6 +201,7 @@ async function loadRepos() {
       const searchInput = document.getElementById('search-input');
       if (searchInput) searchInput.placeholder = `Search ${allRepos.length} repositories…`;
       applyFilters();
+      refreshStatsInBackground();
       const generatedAt = payload.generated_at
         ? new Date(payload.generated_at).toLocaleString()
         : 'unknown';
@@ -1132,6 +1133,7 @@ on('retry-btn', 'click', () => {
     <div class="skeleton h-48 rounded-xl"></div>
     <div class="skeleton h-48 rounded-xl"></div>
   `;
+  
   loadRepos();
 });
 
@@ -1171,4 +1173,26 @@ on('clear-label-btn', 'click', () => {
 /* ------------------------------------------------------------------ */
 /*  BOOT                                                                */
 /* ------------------------------------------------------------------ */
+async function refreshStatsInBackground() {
+  try {
+    const repos = await fetchAllPages(`${API}/orgs/${ORG}/repos`);
+    repos.forEach(liveRepo => {
+      const cached = allRepos.find(r => r.name === liveRepo.name);
+      if (cached) {
+        cached.stargazers_count = liveRepo.stargazers_count;
+        cached.forks_count = liveRepo.forks_count;
+        cached.open_issues_count = liveRepo.open_issues_count;
+        cached.open_pr_count = liveRepo.open_pr_count;
+        cached.updated_at = liveRepo.updated_at;
+      }
+    });
+    applyFilters();
+    const footerTs = document.getElementById('footer-ts');
+    if (footerTs) {
+      footerTs.innerHTML += ' &nbsp;·&nbsp; <span class="text-green-500">Live stats updated</span>';
+    }
+  } catch (err) {
+    console.warn('Background refresh failed:', err.message);
+  }
+}
 loadRepos();
