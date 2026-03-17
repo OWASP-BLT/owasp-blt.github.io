@@ -1171,52 +1171,73 @@ on('clear-label-btn', 'click', () => {
 });
 
 /* ------------------------------------------------------------------ */
-/*  BOOT                                                                */
+/* BOOT & MANUAL REFRESH                                              */
 /* ------------------------------------------------------------------ */
+
+let lastRefreshTime = 0;
+const REFRESH_COOLDOWN = 60000; 
+
 async function refreshStatsInBackground() {
-  try {
-    const repos = await fetchAllPages(`${API}/orgs/${ORG}/repos`);
-    repos.forEach(liveRepo => {
-      const cached = allRepos.find(r => r.name === liveRepo.name);
-      if (cached) {
-        cached.stargazers_count = liveRepo.stargazers_count;
-        cached.forks_count = liveRepo.forks_count;
-        cached.open_issues_count = liveRepo.open_issues_count;
-        cached.open_pr_count = liveRepo.open_pr_count;
-        cached.updated_at = liveRepo.updated_at;
-      }
-    });
-    applyFilters();
-    const footerTs = document.getElementById('footer-ts');
-    if (footerTs) {
-      footerTs.innerHTML += ' &nbsp;·&nbsp; <span class="text-green-500">Live stats updated</span>';
+  const repos = await fetchAllPages(`${API}/orgs/${ORG}/repos`);
+  repos.forEach(liveRepo => {
+    const cached = allRepos.find(r => r.name === liveRepo.name);
+    if (cached) {
+      cached.stargazers_count = liveRepo.stargazers_count;
+      cached.forks_count = liveRepo.forks_count;
+      cached.open_issues_count = liveRepo.open_issues_count;
+      cached.open_pr_count = liveRepo.open_pr_count;
+      cached.updated_at = liveRepo.updated_at;
     }
-  } catch (err) {
-    console.warn('Background refresh failed:', err.message);
+  });
+  applyFilters();
+  
+  const footerTs = document.getElementById('footer-ts');
+  if (footerTs && !footerTs.innerHTML.includes('Live stats updated')) {
+    footerTs.innerHTML += ' &nbsp;·&nbsp; <span class="text-green-500">Live stats updated</span>';
   }
 }
-loadRepos();
+
 document.addEventListener('DOMContentLoaded', () => {
   const refreshBtn = document.getElementById('refresh-btn');
-  if (refreshBtn) {
-    refreshBtn.addEventListener('click', async () => {
-      refreshBtn.disabled = true;
+  if (!refreshBtn) return;
+
+  refreshBtn.addEventListener('click', async () => {
+    const now = Date.now();
+ 
+    if (now - lastRefreshTime < REFRESH_COOLDOWN) {
+      const remaining = Math.ceil((REFRESH_COOLDOWN - (now - lastRefreshTime)) / 1000);
       const originalHTML = refreshBtn.innerHTML;
-      refreshBtn.innerHTML = '<i class="fa-solid fa-rotate-right mr-1 animate-spin"></i>Refreshing...';
-
-      try {
-        await refreshStatsInBackground();
-
-        refreshBtn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Updated!';
-        setTimeout(() => {
-          refreshBtn.disabled = false;
-          refreshBtn.innerHTML = originalHTML;
-        }, 2000);
-      } catch (err) {
-        console.error("Manual refresh failed:", err);
-        refreshBtn.innerHTML = '<i class="fa-solid fa-xmark mr-1"></i>Failed';
+      
+      refreshBtn.disabled = true;
+      refreshBtn.innerHTML = `<i class="fa-solid fa-hourglass-start mr-1"></i>Wait ${remaining}s`;
+      
+      setTimeout(() => {
         refreshBtn.disabled = false;
-      }
-    });
-  }
+        refreshBtn.innerHTML = originalHTML;
+      }, 2000);
+      return;
+    }
+
+
+    refreshBtn.disabled = true;
+    const originalHTML = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<i class="fa-solid fa-rotate-right mr-1 animate-spin"></i>Refreshing...';
+
+    try {
+      await refreshStatsInBackground();
+      lastRefreshTime = Date.now(); 
+      refreshBtn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Updated!';
+    } catch (err) {
+      console.error("Manual refresh failed:", err);
+      refreshBtn.innerHTML = '<i class="fa-solid fa-xmark mr-1"></i>Failed';
+    } finally {
+      setTimeout(() => {
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = originalHTML;
+      }, 2000);
+    }
+  });
 });
+
+
+loadRepos();
