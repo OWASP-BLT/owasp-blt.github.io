@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
     # Manually triggered from the GitHub Actions UI
 
+# Only allow one screenshot run at a time
+concurrency:
+  group: "screenshots"
+  cancel-in-progress: true
+
 jobs:
   screenshot:
     name: Take screenshots of all repo websites
